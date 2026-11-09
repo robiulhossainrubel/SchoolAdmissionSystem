@@ -52,3 +52,4 @@ services:
 volumes:
   postgres_data:
     name: school_admission_postgres_data
+

@@ -22,3 +22,4 @@ public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal("Healthy", content);
     }
 }
+
