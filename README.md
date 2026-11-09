@@ -63,8 +63,21 @@ npm run dev
 The UI will start at `http://localhost:5173`.
 
 ### 3. Running Automated Tests
+
+#### Backend Test Suite (30 Tests)
 ```bash
 dotnet test backend/SchoolAdmissionSystem.sln
+```
+
+#### Frontend Test Suite (19 Tests)
+```bash
+cd frontend
+npm test
+```
+
+#### All-in-One Automated System Audit (PowerShell)
+```powershell
+pwsh scripts/verify-all.ps1
 ```
 
 ---
