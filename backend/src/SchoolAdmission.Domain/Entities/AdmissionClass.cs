@@ -10,3 +10,4 @@ public class AdmissionClass
     // Navigation property
     public ICollection<AdmissionHold> Holds { get; set; } = new List<AdmissionHold>();
 }
+

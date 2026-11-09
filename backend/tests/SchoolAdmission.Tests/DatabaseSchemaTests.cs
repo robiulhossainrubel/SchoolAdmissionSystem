@@ -112,3 +112,4 @@ public class DatabaseSchemaTests : IClassFixture<WebApplicationFactory<Program>>
         Assert.Contains(fks, fk => fk.PrincipalEntityType.ClrType == typeof(AdmissionClass) && fk.DeleteBehavior == DeleteBehavior.Restrict);
     }
 }
+

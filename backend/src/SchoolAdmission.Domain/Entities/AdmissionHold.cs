@@ -16,3 +16,4 @@ public class AdmissionHold
     // Navigation property
     public AdmissionClass? Class { get; set; }
 }
+
