@@ -70,3 +70,4 @@ public class ExceptionHandlingMiddleware
         await context.Response.WriteAsync(json);
     }
 }
+

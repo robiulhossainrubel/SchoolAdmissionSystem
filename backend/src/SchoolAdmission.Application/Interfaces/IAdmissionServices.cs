@@ -17,3 +17,4 @@ public interface IHoldService
     Task CancelHoldAsync(Guid holdId, string studentId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<StudentHoldResponse>> GetStudentHoldsAsync(string studentId, CancellationToken cancellationToken = default);
 }
+

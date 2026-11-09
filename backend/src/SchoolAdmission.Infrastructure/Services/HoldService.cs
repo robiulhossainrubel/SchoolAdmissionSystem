@@ -53,18 +53,17 @@ public class HoldService : IHoldService
             $"UPDATE admission_holds SET status = 'EXPIRED' WHERE class_id = {classId} AND status = 'HELD' AND expires_at_utc <= {nowUtc}",
             cancellationToken);
 
-        // 3. Count active reservations
-        var confirmedSeats = await _dbContext.Holds
-            .CountAsync(h => h.ClassId == classId && h.Status == HoldStatus.CONFIRMED, cancellationToken);
-
-        var heldSeats = await _dbContext.Holds
-            .CountAsync(h => h.ClassId == classId && h.Status == HoldStatus.HELD && h.ExpiresAtUtc > nowUtc, cancellationToken);
+        // 3. Single atomic query: Count active reservations (CONFIRMED + unexpired HELD)
+        var consumedSeats = await _dbContext.Holds
+            .CountAsync(h => h.ClassId == classId && 
+                (h.Status == HoldStatus.CONFIRMED || (h.Status == HoldStatus.HELD && h.ExpiresAtUtc > nowUtc)),
+                cancellationToken);
 
         // 4. Verify capacity
-        if (confirmedSeats + heldSeats >= offering.TotalSeats)
+        if (consumedSeats >= offering.TotalSeats)
         {
-            _logger.LogWarning("Sold out: class {ClassId} has {Confirmed} confirmed and {Held} held of {Total} total seats",
-                classId, confirmedSeats, heldSeats, offering.TotalSeats);
+            _logger.LogWarning("Sold out: class {ClassId} has {Consumed} consumed seats of {Total} total seats",
+                classId, consumedSeats, offering.TotalSeats);
             await transaction.RollbackAsync(cancellationToken);
             throw new ConflictException("No seats available for this class offering.");
         }
@@ -140,6 +139,21 @@ public class HoldService : IHoldService
     {
         using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
+        // Find hold first to identify parent class
+        var existingHold = await _dbContext.Holds.AsNoTracking()
+            .FirstOrDefaultAsync(h => h.Id == holdId, cancellationToken);
+
+        if (existingHold == null)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw new NotFoundException($"Hold with ID '{holdId}' was not found.");
+        }
+
+        // Acquire lock on parent offering row in consistent hierarchical order
+        await _dbContext.Classes
+            .FromSqlInterpolated($"SELECT * FROM admission_classes WHERE id = {existingHold.ClassId} FOR UPDATE")
+            .FirstOrDefaultAsync(cancellationToken);
+
         // Lock the hold row
         var hold = await _dbContext.Holds
             .FromSqlInterpolated($"SELECT * FROM admission_holds WHERE id = {holdId} FOR UPDATE")
@@ -200,6 +214,20 @@ public class HoldService : IHoldService
     public async Task CancelHoldAsync(Guid holdId, string studentId, CancellationToken cancellationToken = default)
     {
         using var transaction = await _dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+
+        var existingHold = await _dbContext.Holds.AsNoTracking()
+            .FirstOrDefaultAsync(h => h.Id == holdId, cancellationToken);
+
+        if (existingHold == null)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw new NotFoundException($"Hold with ID '{holdId}' was not found.");
+        }
+
+        // Consistent lock order: parent class first
+        await _dbContext.Classes
+            .FromSqlInterpolated($"SELECT * FROM admission_classes WHERE id = {existingHold.ClassId} FOR UPDATE")
+            .FirstOrDefaultAsync(cancellationToken);
 
         var hold = await _dbContext.Holds
             .FromSqlInterpolated($"SELECT * FROM admission_holds WHERE id = {holdId} FOR UPDATE")

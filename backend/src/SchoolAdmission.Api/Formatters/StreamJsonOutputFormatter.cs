@@ -26,3 +26,4 @@ public class StreamJsonOutputFormatter : TextOutputFormatter
         await JsonSerializer.SerializeAsync(response.Body, value, objectType, _jsonSerializerOptions);
     }
 }
+
