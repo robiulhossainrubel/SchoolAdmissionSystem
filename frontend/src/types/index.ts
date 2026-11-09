@@ -36,3 +36,4 @@ export interface ApiProblemDetails {
   detail?: string;
   instance?: string;
 }
+

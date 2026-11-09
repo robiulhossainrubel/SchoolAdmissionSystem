@@ -283,3 +283,4 @@ export const HoldModal: React.FC<Props> = ({ onHoldUpdated }) => {
     </div>
   );
 };
+

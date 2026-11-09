@@ -1,44 +1,44 @@
 # AI Agent Acceptance Checklist
 
 ## Features
-- [ ] All required endpoints implemented.
-- [ ] Admin can create offerings.
-- [ ] Parent can view offerings.
-- [ ] 17-digit student ID validation.
-- [ ] Hold creation works.
-- [ ] Confirmation works.
-- [ ] Cancellation works.
-- [ ] Expiration releases seats.
-- [ ] Student hold history works.
-- [ ] Payment simulation works.
+- [x] All required endpoints implemented.
+- [x] Admin can create offerings.
+- [x] Parent can view offerings.
+- [x] 17-digit student ID validation.
+- [x] Hold creation works.
+- [x] Confirmation works.
+- [x] Cancellation works.
+- [x] Expiration releases seats.
+- [x] Student hold history works.
+- [x] Payment simulation works.
 
 ## Correctness
-- [ ] PostgreSQL migrations work.
-- [ ] UTC timestamps used.
-- [ ] Capacity counters correct.
-- [ ] No overselling under concurrency.
-- [ ] Duplicate active holds prevented.
+- [x] PostgreSQL migrations work.
+- [x] UTC timestamps used.
+- [x] Capacity counters correct.
+- [x] No overselling under concurrency.
+- [x] Duplicate active holds prevented.
 
 ## Tests
-- [ ] Unit tests pass.
-- [ ] API integration tests pass.
-- [ ] PostgreSQL integration tests pass.
-- [ ] 100 concurrent requests vs capacity 10 tested.
-- [ ] Actual test results documented.
+- [x] Unit tests pass.
+- [x] API integration tests pass.
+- [x] PostgreSQL integration tests pass.
+- [x] 100 concurrent requests vs capacity 10 tested.
+- [x] Actual test results documented.
 
 ## Docker
-- [ ] docker compose config succeeds.
-- [ ] docker compose up --build succeeds.
-- [ ] API works at http://localhost:8080.
-- [ ] Frontend works at http://localhost:5173.
-- [ ] CORS works.
-- [ ] Database volume persists.
+- [x] docker compose config succeeds.
+- [x] docker compose up --build succeeds.
+- [x] API works at http://localhost:8080.
+- [x] Frontend works at http://localhost:5173.
+- [x] CORS works.
+- [x] Database volume persists.
 
 ## Delivery
-- [ ] README complete.
-- [ ] ASSUMPTIONS.md complete.
-- [ ] AI_USAGE.md honestly completed.
-- [ ] .env.example has placeholders only.
-- [ ] No secrets committed.
-- [ ] Meaningful Git commits.
-- [ ] No TODOs or placeholder endpoints.
+- [x] README complete.
+- [x] ASSUMPTIONS.md complete.
+- [x] AI_USAGE.md honestly completed.
+- [x] .env.example has placeholders only.
+- [x] No secrets committed.
+- [x] Meaningful Git commits.
+- [x] No TODOs or placeholder endpoints.
